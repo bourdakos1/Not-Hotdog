@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ibm.watson.developer_cloud.visual_recognition.v3.VisualRecognition;
@@ -32,18 +33,19 @@ import java.nio.channels.FileChannel;
 
 public class MainFragment extends CameraFragment {
     private static final String TAG = "CameraSample";
+    TextView tv;
 
     private class ClassifyTask extends AsyncTask<File, Integer, VisualClassification> {
         @Override
         protected VisualClassification doInBackground(File... files) {
 
             VisualRecognition service = new VisualRecognition(VisualRecognition.VERSION_DATE_2016_05_20);
-            service.setApiKey("2d7f02e6708f3562a043ebf31159ff849d94d123");
+            service.setApiKey("4ef2b4c252cbaa92235bd7724d15a9962f59cf85");
 
             Log.d(TAG, "Classify an image");
             ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
                     .images(files[0])
-                    .classifierIds("default")
+                    .classifierIds("food")
                     .build();
             VisualClassification result = service.classify(options).execute();
             return result;
@@ -51,13 +53,16 @@ public class MainFragment extends CameraFragment {
 
         @Override
         protected void onPostExecute(VisualClassification result) {
+            tv.setText(result.toString());
             Log.d(TAG, result.toString());
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return View.inflate(getContext(), R.layout.fragment_main, container);
+        View view = View.inflate(getContext(), R.layout.fragment_main, container);
+        tv = (TextView) view.findViewById(R.id.result);
+        return view;
     }
 
     @Override
