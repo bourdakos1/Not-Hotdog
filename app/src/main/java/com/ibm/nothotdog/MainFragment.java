@@ -34,22 +34,22 @@ public class MainFragment extends CameraFragment {
     private static final String TAG = "CameraSample";
 
     private class ClassifyTask extends AsyncTask<File, Integer, VisualClassification> {
-        protected VisualClassification doInBackground(File... file) {
+        @Override
+        protected VisualClassification doInBackground(File... files) {
+
             VisualRecognition service = new VisualRecognition(VisualRecognition.VERSION_DATE_2016_05_20);
-            service.setApiKey("4ef2b4c252cbaa92235bd7724d15a9962f59cf85");
+            service.setApiKey("2d7f02e6708f3562a043ebf31159ff849d94d123");
 
             Log.d(TAG, "Classify an image");
             ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
-                    // Not great, but fine for this...
-                    .images(file[0])
+                    .images(files[0])
+                    .classifierIds("default")
                     .build();
             VisualClassification result = service.classify(options).execute();
             return result;
         }
 
-        protected void onProgressUpdate(Integer... progress) {
-        }
-
+        @Override
         protected void onPostExecute(VisualClassification result) {
             Log.d(TAG, result.toString());
         }
