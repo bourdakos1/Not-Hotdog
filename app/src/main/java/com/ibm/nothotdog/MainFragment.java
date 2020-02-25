@@ -25,6 +25,10 @@ import com.ibm.watson.developer_cloud.visual_recognition.v3.model.VisualClassifi
 import com.xlythe.fragment.camera.CameraFragment;
 import com.xlythe.view.camera.Exif;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -45,7 +49,7 @@ public class MainFragment extends CameraFragment {
             Log.d(TAG, "Classify an image");
             ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
                     .images(files[0])
-                    .classifierIds("food")
+                    .classifierIds("stuff_1719981427")
                     .build();
             VisualClassification result = service.classify(options).execute();
             return result;
@@ -53,8 +57,26 @@ public class MainFragment extends CameraFragment {
 
         @Override
         protected void onPostExecute(VisualClassification result) {
-            tv.setText(result.toString());
-            Log.d(TAG, result.toString());
+            try {
+                JSONObject jObj = new JSONObject(result.toString());
+                JSONArray jArr = jObj.getJSONArray("images");
+                for (int i=0; i < jArr.length(); i++) {
+                    JSONObject obj = jArr.getJSONObject(i);
+                    JSONArray jArr2 = obj.getJSONArray("classifiers");
+                    for (int i2=0; i2 < jArr2.length(); i2++) {
+                        JSONObject obj2 = jArr2.getJSONObject(i2);
+                        JSONArray jArr3 = obj2.getJSONArray("classes");
+                        for (int i3=0; i3 < jArr3.length(); i3++) {
+                            JSONObject obj3 = jArr3.getJSONObject(i3);
+                            Log.d("obj3", obj3.toString());
+                            tv.setText(obj3.toString());
+                        }
+                    }
+                }
+
+            } catch (JSONException e) {
+
+            }
         }
     }
 
